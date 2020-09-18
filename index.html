@@ -1,36 +1,24 @@
 <!DOCTYPE html>
-<html>
-    <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <script src="plotly.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    </head>
-    <body>
-    <div class="navbar"><span>Currenly generating random data and updating using return math.random</span></div>
-    <div class="wrapper">
-        <div id="chart"></div>
-        <script>
-            function getData() {
-                return Math.random();
-            }
-            Plotly.plot('chart',[{
-                y:[getData()],
-                type:'line'
-            }]);
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content ="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Fetch and Graph CSV</title>
+  </head>
+  <body>
+    <script>
+      //Data from:https//data.giss.masa.gov/gistemp/
+      //Mean from:https://earthobservatory.nasa.gov/
 
-            var cnt = 0;
-            setInterval(function(){
-                Plotly.extendTraces('chart',{ y:[[getData()]]}, [0]);
-                cnt++;
-                if(cnt > 500) {
-                    Plotly.relayout('chart',{
-                        xaxis: {
-                            range: [cnt-500,cnt]
-                        }
-                    });
-                }
-            },15);
-        </script>
-    </div>
-    </body>
+      getData();
+
+      async function getData() {
+        const response = await fetch('test.csv');
+        const data = await response.text();
+        console.log(data);
+      }
+
+    </script>
+  </body>
 </html>
