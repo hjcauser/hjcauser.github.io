@@ -11,7 +11,6 @@
 
     <canvas id="chart" width="400" height="400"></canvas>
 
-
     <script>
       //gobal variables
       const xlabels =[];
@@ -20,21 +19,35 @@
       chartit();
 
       async function chartit(){
-        await getData();
+      const data = await getData();
       const ctx = document.getElementById('chart').getContext('2d');
             const myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: xlabels,
+            labels: data.xs,
             datasets: [{
-                label: 'Global Average Temperature',
-                data: ytemps,
-                fill: false, 
+                label: 'Combined Land-Surface Air and Sea-Surface Water Temperature in C°',
+                data: data.ys,
+                fill: false,
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
             }]
         },
+        options: {
+          scales:{
+            yAxes:[
+              {
+                ticks: {
+                  //include degress sign in ylabels
+                  callback: function(value, index, values) {
+                    return value + '°';
+                  }
+                }
+              }
+            ]
+
+          }}
     });
   }
       //Data from:https//data.giss.masa.gov/gistemp/
@@ -43,6 +56,10 @@
 
 
       async function getData() {
+        const xs = [];
+        const ys = [];
+
+
         const response = await fetch('https://raw.githubusercontent.com/hjcauser/hjcauser.github.io/master/ZonAnn.Ts%2BdSST.csv');
         const data = await response.text();
 
@@ -50,11 +67,12 @@
         table.forEach(row => {
             const columns = row.split(',');
             const year = columns[0];
-            xlabels.push(year);
+            xs.push(year);
             const temp = columns[1];
-            ytemps.push(parseFloat(temp) + 14);
+            ys.push(parseFloat(temp) + 14);
             console.log(year, temp);
         });
+        return {xs, ys};
       }
 
 </script>
